@@ -10,7 +10,7 @@
 ## ✨ 주요 기능
 
 ### 필수 기능
-- **익명 커뮤니티 CRUD** — 5개 권역 게시판(목록·상세·작성·수정·삭제), `localStorage` 저장
+- **익명 커뮤니티 CRUD** — 서울 게시판(목록·상세·작성·수정·삭제), `localStorage` 저장
 - **비밀번호 권한 검증** — 작성 시 수정용 비밀번호 저장, 수정·삭제 시 프론트 로직으로 일치 확인
   - ⚠️ 서버가 없어 비밀번호는 암호화 없이 저장·비교됩니다. **교육 목적의 의도된 설계**입니다.
 - **지역정보 챗봇** — 제공 JSON 기반 자연어 Q&A, 플로팅 위젯, 대화 히스토리, 모바일 대응
@@ -19,7 +19,7 @@
 
 ### 선택 기능 (요구 최소 1개 → **5종 모두 구현**)
 - 🗺️ **지도 시각화** (Leaflet) — 카테고리별 관광 POI 핀 + 필터
-- 📊 **데이터 대시보드** (Chart.js) — 카테고리·권역·자치구 TOP10 통계
+- 📊 **데이터 대시보드** (Chart.js) — 카테고리 비중·인기 태그·자치구 TOP10 통계
 - 📅 **축제 캘린더** — 축제·행사 월별 시각화
 - 🔔 **실시간 알림** — 서버 없이 localStorage polling 새 글 토스트
 - 🔖 **커뮤니티 부가기능** — 조회수·검색·태그·북마크·좋아요·링크 공유(OG 태그)
@@ -68,7 +68,7 @@ npm run preview   # 빌드 결과 미리보기
 ├─ localhub-frontend/            # Vue3 + Vite SPA
 │  ├─ public/data/seoul/         # 서울 관광 데이터 8종 + manifest.json
 │  ├─ src/
-│  │  ├─ constants/              # 권역·카테고리 정의
+│  │  ├─ constants/              # 지역·카테고리 정의
 │  │  ├─ services/               # dataLoader / storage / gms(챗봇)
 │  │  ├─ stores/                 # posts (Pinia)
 │  │  ├─ components/             # 헤더, 챗봇, 모달, 페이지네이션, 알림 …
@@ -76,9 +76,9 @@ npm run preview   # 빌드 결과 미리보기
 │  │  └─ router/
 │  ├─ .env.example  netlify.toml  vite.config.js
 ├─ docs/
-│  ├─ MVP_TEMPLATE.md            # MVP 작성용 빈 템플릿
-│  ├─ MVP_LocalHub.md            # 실제 추출·작성한 MVP 정의서
-│  ├─ WBS_Gantt.md               # 3일 WBS + 간트 차트
+│  ├─ MVP_TEMPLATE.md / MVP_TEMPLATE_간략.docx   # MVP 간략 빈 템플릿 (md/docx)
+│  ├─ MVP_LocalHub.md / MVP_LocalHub.docx        # 실제 채운 MVP 정의서 (md/docx)
+│  ├─ WBS_Gantt.md / WBS_Gantt_LocalHub.xlsx     # 3일 WBS + 간트 (md/xlsx)
 │  ├─ 진행순서.md                 # 개발 진행 순서
 │  └─ ERROR_LOG.md               # 에러/트러블슈팅 로그
 └─ README.md
@@ -90,8 +90,8 @@ npm run preview   # 빌드 결과 미리보기
 
 | 경로 | 화면 |
 |------|------|
-| `/` | 홈 — 권역 카드, 카테고리 요약, 최근 게시글 |
-| `/board/:region` | 권역 게시판 목록 |
+| `/` | 홈 — 서울 게시판 카드, 카테고리 요약, 최근 게시글 |
+| `/board/seoul` | 서울 게시판 목록 |
 | `/post/:id` | 게시글 상세 |
 | `/board/:region/write`, `/post/:id/edit` | 작성 / 수정 |
 | `/map` | 관광 지도 |
