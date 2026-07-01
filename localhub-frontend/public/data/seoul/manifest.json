@@ -1,0 +1,83 @@
+{
+  "region": "서울",
+  "regionCode": "SEL",
+  "source": "한국관광공사 TourAPI 4.0",
+  "license": "공공누리 제3유형 (출처표시-변경금지)",
+  "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+  "collectedAt": "2026-06",
+  "categories": [
+    {
+      "key": "attraction",
+      "label": "관광지",
+      "contentTypeId": "12",
+      "total": 783,
+      "withCoord": 783,
+      "file": "attraction.json",
+      "sizeKB": 426
+    },
+    {
+      "key": "leisure",
+      "label": "레포츠",
+      "contentTypeId": "28",
+      "total": 126,
+      "withCoord": 126,
+      "file": "leisure.json",
+      "sizeKB": 70
+    },
+    {
+      "key": "culture",
+      "label": "문화시설",
+      "contentTypeId": "14",
+      "total": 566,
+      "withCoord": 566,
+      "file": "culture.json",
+      "sizeKB": 312
+    },
+    {
+      "key": "shopping",
+      "label": "쇼핑",
+      "contentTypeId": "38",
+      "total": 4368,
+      "withCoord": 4368,
+      "file": "shopping.json",
+      "sizeKB": 2493
+    },
+    {
+      "key": "lodging",
+      "label": "숙박",
+      "contentTypeId": "32",
+      "total": 423,
+      "withCoord": 423,
+      "file": "lodging.json",
+      "sizeKB": 209
+    },
+    {
+      "key": "course",
+      "label": "여행코스",
+      "contentTypeId": "25",
+      "total": 51,
+      "withCoord": 51,
+      "file": "course.json",
+      "sizeKB": 27
+    },
+    {
+      "key": "restaurant",
+      "label": "음식점",
+      "contentTypeId": "39",
+      "total": 1632,
+      "withCoord": 1632,
+      "file": "restaurant.json",
+      "sizeKB": 841
+    },
+    {
+      "key": "festival",
+      "label": "축제공연행사",
+      "contentTypeId": "15",
+      "total": 201,
+      "withCoord": 201,
+      "file": "festival.json",
+      "sizeKB": 118
+    }
+  ],
+  "grandTotal": 8150
+}

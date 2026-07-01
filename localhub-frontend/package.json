@@ -1,0 +1,23 @@
+{
+  "name": "localhub-frontend",
+  "version": "1.0.0",
+  "description": "LocalHub - 공공데이터 기반 지역 정보 공유 익명 커뮤니티 (Vue3 + Vite SPA)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "leaflet": "^1.9.4",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.0.7"
+  }
+}
