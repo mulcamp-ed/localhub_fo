@@ -3,7 +3,7 @@
 공공데이터(한국관광공사 TourAPI 4.0)를 활용한 **백엔드 없는 정적 SPA** 지역 정보 커뮤니티입니다.
 회원가입 없이 익명으로 지역 정보를 공유하고, 지도·대시보드·챗봇으로 관광 데이터를 소비할 수 있습니다.
 
-> LocalHub 공문(v8) 요구사항 기반 · Vue.js 3 (Vite) · 배포: Netlify
+> LocalHub 공문(v8) 요구사항 기반 · Vue.js 3 (Vite)
 
 ---
 
@@ -11,8 +11,6 @@
 
 ### 필수 기능
 - **익명 커뮤니티 CRUD** — 서울 게시판(목록·상세·작성·수정·삭제), `localStorage` 저장
-- **비밀번호 권한 검증** — 작성 시 수정용 비밀번호 저장, 수정·삭제 시 프론트 로직으로 일치 확인
-  - ⚠️ 서버가 없어 비밀번호는 암호화 없이 저장·비교됩니다. **교육 목적의 의도된 설계**입니다.
 - **지역정보 챗봇** — 제공 JSON 기반 자연어 Q&A, 플로팅 위젯, 대화 히스토리, 모바일 대응
   - `VITE_GMS_API_KEY`가 있으면 **AI(LLM) 모드**, 없으면 **로컬 검색 모드**로 폴백
 - **공공데이터 연동** — 서울 TourAPI 8종(8,150건)을 프론트에서 직접 로드
@@ -35,7 +33,6 @@
 | 저장소 | 브라우저 localStorage (백엔드 없음) |
 | 시각화 | Leaflet, Chart.js |
 | AI | OpenAI 호환 게이트웨이(GMS) 직접 호출 |
-| 배포 | Netlify |
 
 ---
 
@@ -64,7 +61,6 @@ npm run preview   # 빌드 결과 미리보기
 ## 📁 프로젝트 구조
 
 ```
-00_02_minor/
 ├─ localhub-frontend/            # Vue3 + Vite SPA
 │  ├─ public/data/seoul/         # 서울 관광 데이터 8종 + manifest.json
 │  ├─ src/
@@ -74,7 +70,7 @@ npm run preview   # 빌드 결과 미리보기
 │  │  ├─ components/             # 헤더, 챗봇, 모달, 페이지네이션, 알림 …
 │  │  ├─ views/                  # 홈/게시판/상세/작성/지도/대시보드/캘린더/북마크
 │  │  └─ router/
-│  ├─ .env.example  netlify.toml  vite.config.js
+│  ├─ .env.example  vite.config.js
 ├─ docs/
 │  ├─ MVP_TEMPLATE.md / MVP_TEMPLATE_간략.docx   # MVP 간략 빈 템플릿 (md/docx)
 │  ├─ MVP_LocalHub.md / MVP_LocalHub.docx        # 실제 채운 MVP 정의서 (md/docx)
@@ -114,19 +110,6 @@ npm run preview   # 빌드 결과 미리보기
 | 수집 지역 / 건수 | 서울(SEL) / 8,150건 (관광지·음식점·축제·문화시설·레포츠·숙박·쇼핑·여행코스) |
 
 > 공공누리 3유형 준수: 출처를 표기(앱 푸터 상시)하며, 원본 데이터 값은 변형하지 않고 필요한 필드만 선택하여 사용합니다.
-
----
-
-## 🌐 배포 (Netlify)
-
-`netlify.toml`에 빌드 설정이 포함되어 있습니다.
-
-1. Netlify에 GitHub 저장소 연결 (repo 연동 배포)
-2. Base directory: `localhub-frontend` · Build: `npm run build` · Publish: `dist`
-3. 환경변수는 Netlify 대시보드의 **Environment variables**에 `VITE_GMS_*`로 등록 (선택)
-4. 배포 완료 후 URL 동작 확인
-
-> SPA(History 모드) 폴백 리다이렉트가 `netlify.toml`에 설정되어 있습니다.
 
 ---
 
