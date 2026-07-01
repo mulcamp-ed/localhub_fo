@@ -6,7 +6,6 @@ import {
 } from 'chart.js'
 import { loadManifest, loadCategory } from '@/services/dataLoader'
 import { CATEGORY_MAP } from '@/constants/categories'
-import { REGIONS, regionName } from '@/constants/regions'
 import { usePostStore } from '@/stores/posts'
 
 Chart.register(BarController, BarElement, DoughnutController, ArcElement, CategoryScale, LinearScale, Tooltip, Legend)
@@ -15,6 +14,7 @@ const store = usePostStore()
 const manifest = ref(null)
 const loading = ref(true)
 const topGu = ref([])
+const hasTags = ref(false)
 
 const catCanvas = ref(null)
 const postCanvas = ref(null)
@@ -70,20 +70,27 @@ function renderCategoryChart() {
 }
 
 function renderPostChart() {
-  const counts = store.countByRegion
+  // 게시글에서 많이 쓰인 태그 TOP 8 (커뮤니티 관심사)
+  const tagCount = {}
+  for (const p of store.posts) for (const t of p.tags || []) tagCount[t] = (tagCount[t] || 0) + 1
+  const top = Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 8)
+  hasTags.value = top.length > 0
+  if (!top.length) return
+
   charts.push(new Chart(postCanvas.value, {
     type: 'bar',
     data: {
-      labels: REGIONS.map((r) => r.name),
+      labels: top.map((t) => `#${t[0]}`),
       datasets: [{
         label: '게시글 수',
-        data: REGIONS.map((r) => counts[r.key] || 0),
+        data: top.map((t) => t[1]),
         backgroundColor: '#2563eb', borderRadius: 6
       }]
     },
     options: {
+      indexAxis: 'y',
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
     }
   }))
 }
@@ -143,8 +150,11 @@ function renderGuChart() {
         <div class="canvas-wrap"><canvas ref="catCanvas"></canvas></div>
       </div>
       <div class="chart-box card">
-        <h3>권역별 게시글 현황</h3>
-        <div class="canvas-wrap"><canvas ref="postCanvas"></canvas></div>
+        <h3>게시글 인기 태그 TOP</h3>
+        <div class="canvas-wrap">
+          <canvas v-show="hasTags" ref="postCanvas"></canvas>
+          <p v-if="!hasTags && !loading" class="muted no-data">아직 태그가 있는 게시글이 없어요.</p>
+        </div>
       </div>
       <div class="chart-box card wide">
         <h3>자치구별 관광지·음식점 TOP 10 (인기 지역)</h3>
@@ -168,5 +178,6 @@ function renderGuChart() {
 .chart-box h3 { margin: 0 0 16px; font-size: 16px; }
 .canvas-wrap { position: relative; height: 300px; }
 .canvas-wrap.tall { height: 380px; }
+.no-data { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 @media (max-width: 720px) { .charts { grid-template-columns: 1fr; } }
 </style>

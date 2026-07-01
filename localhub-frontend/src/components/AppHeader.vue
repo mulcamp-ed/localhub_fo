@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { REGIONS } from '@/constants/regions'
+import { DATA_REGION_KEY } from '@/constants/regions'
 
 const open = ref(false)
 const nav = [
+  { to: `/board/${DATA_REGION_KEY}`, label: '서울 게시판', icon: '🏘️' },
   { to: '/map', label: '지도', icon: '🗺️' },
   { to: '/dashboard', label: '대시보드', icon: '📊' },
   { to: '/calendar', label: '축제 캘린더', icon: '📅' },
@@ -20,19 +21,6 @@ const nav = [
       <button class="menu-btn" @click="open = !open" aria-label="메뉴">☰</button>
 
       <nav class="nav" :class="{ open }" @click="open = false">
-        <div class="dropdown">
-          <span class="nav-link">🏘️ 게시판 ▾</span>
-          <div class="dropdown-menu">
-            <RouterLink
-              v-for="r in REGIONS"
-              :key="r.key"
-              :to="`/board/${r.key}`"
-              class="dropdown-item"
-            >
-              {{ r.emoji }} {{ r.name }}
-            </RouterLink>
-          </div>
-        </div>
         <RouterLink v-for="n in nav" :key="n.to" :to="n.to" class="nav-link">
           {{ n.icon }} {{ n.label }}
         </RouterLink>

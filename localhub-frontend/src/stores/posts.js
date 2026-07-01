@@ -1,14 +1,28 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { storage } from '@/services/storage'
+import { REGION_MAP, DATA_REGION_KEY } from '@/constants/regions'
 
 // 간단한 고유 id 생성
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
 }
 
+// 과거(5권역) 데이터 → 서울 단일 권역으로 이관
+function migrateRegions(list) {
+  let changed = false
+  for (const p of list) {
+    if (!REGION_MAP[p.region]) {
+      p.region = DATA_REGION_KEY
+      changed = true
+    }
+  }
+  return changed
+}
+
 export const usePostStore = defineStore('posts', () => {
   const posts = ref(storage.getPosts())
+  if (migrateRegions(posts.value)) storage.savePosts(posts.value)
   const bookmarks = ref(storage.getBookmarks()) // 북마크한 post id 배열
   const liked = ref(storage.getLiked()) // 좋아요 누른 post id 배열 (중복 방지)
 
@@ -123,9 +137,9 @@ export const usePostStore = defineStore('posts', () => {
   function seedIfEmpty() {
     if (posts.value.length > 0) return
     const samples = [
-      { region: 'capital', title: '양화한강공원 야경 추천!', content: '노을 질 때 가면 정말 예뻐요. 자전거 대여도 가능합니다.', tags: ['한강', '산책'] },
-      { region: 'capital', title: '종로 문학주간 다녀왔어요', content: '동숭동 대학로에서 하는 문학 행사, 볼거리가 많네요.', tags: ['축제', '대학로'] },
-      { region: 'chungcheong', title: '대전 비대면 관광지 문의', content: '언택트로 힐링하기 좋은 코스 아시는 분?', tags: ['힐링'] }
+      { region: 'seoul', title: '양화한강공원 야경 추천!', content: '노을 질 때 가면 정말 예뻐요. 자전거 대여도 가능합니다.', tags: ['한강', '산책'] },
+      { region: 'seoul', title: '종로 문학주간 다녀왔어요', content: '동숭동 대학로에서 하는 문학 행사, 볼거리가 많네요.', tags: ['축제', '대학로'] },
+      { region: 'seoul', title: '성수동 카페거리 나들이', content: '요즘 핫한 성수동, 감성 카페가 정말 많아요. 주말엔 사람이 많으니 오전 추천!', tags: ['성수동', '카페'] }
     ]
     samples.forEach((s, i) => {
       const now = Date.now() - (samples.length - i) * 3600_000

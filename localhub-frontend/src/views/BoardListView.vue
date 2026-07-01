@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import Pagination from '@/components/Pagination.vue'
-import { REGIONS, regionName, REGION_MAP } from '@/constants/regions'
+import { REGIONS, regionName, REGION_MAP, IS_MULTI_REGION } from '@/constants/regions'
 import { usePostStore } from '@/stores/posts'
 
 const props = defineProps({ region: { type: String, required: true } })
@@ -53,8 +53,8 @@ function fmt(ts) {
 
 <template>
   <div class="container section">
-    <!-- 권역 탭 -->
-    <div class="tabs">
+    <!-- 권역 탭 (다중 권역일 때만 표시) -->
+    <div v-if="IS_MULTI_REGION" class="tabs">
       <RouterLink
         v-for="r in REGIONS"
         :key="r.key"

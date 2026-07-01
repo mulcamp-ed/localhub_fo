@@ -45,10 +45,10 @@ function fmt(ts) {
   </section>
 
   <div class="container">
-    <!-- 5개 권역 카드 -->
+    <!-- 서울 게시판 -->
     <section class="section">
-      <h2 class="page-title">권역별 게시판</h2>
-      <p class="page-sub">전국 5개 권역의 지역 정보를 공유하세요.</p>
+      <h2 class="page-title">서울 게시판</h2>
+      <p class="page-sub">서울의 지역 정보를 익명으로 자유롭게 공유하세요.</p>
       <div class="grid regions">
         <RegionCard
           v-for="r in REGIONS"
