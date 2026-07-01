@@ -6,7 +6,7 @@ import { loadCategory } from '@/services/dataLoader'
 
 const festivals = ref([])
 const loading = ref(true)
-const cursor = ref(new Date(2026, 6, 1)) // 기본 2026-07
+const cursor = ref(new Date(2026, 6, 1)) // 데이터 로드 후 가장 이벤트 많은 달로 조정
 const selectedDay = ref(null)
 
 function parseDate(s) {
@@ -21,6 +21,18 @@ onMounted(async () => {
     festivals.value = items
       .map((it) => ({ ...it, date: parseDate(it.modifiedtime) }))
       .filter((it) => it.date)
+
+    // 이벤트가 가장 많은 달을 기본으로 표시
+    const monthCount = {}
+    for (const f of festivals.value) {
+      const k = `${f.date.getFullYear()}-${f.date.getMonth()}`
+      monthCount[k] = (monthCount[k] || 0) + 1
+    }
+    const best = Object.entries(monthCount).sort((a, b) => b[1] - a[1])[0]
+    if (best) {
+      const [y, m] = best[0].split('-').map(Number)
+      cursor.value = new Date(y, m, 1)
+    }
   } catch (e) {
     console.error('축제 데이터 로드 실패', e)
   } finally {
@@ -94,7 +106,7 @@ const weekdays = ['일', '월', '화', '수', '목', '금', '토']
         v-for="(d, i) in cells"
         :key="i"
         class="cell"
-        :class="{ empty: !d, has: d && byDay[d], active: d === selectedDay }"
+        :class="{ blank: !d, has: d && byDay[d], active: d && d === selectedDay }"
         @click="d && byDay[d] && (selectedDay = d)"
       >
         <template v-if="d">
@@ -132,7 +144,7 @@ const weekdays = ['일', '월', '화', '수', '목', '금', '토']
   min-height: 78px; border: 1px solid var(--border); border-radius: 8px; padding: 6px;
   display: flex; flex-direction: column; gap: 4px;
 }
-.cell.empty { border: none; background: transparent; }
+.cell.blank { border: none; background: transparent; }
 .cell.has { cursor: pointer; background: #fffbeb; border-color: #fde68a; }
 .cell.has:hover { background: #fef3c7; }
 .cell.active { outline: 2px solid var(--primary); }
