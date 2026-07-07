@@ -1,13 +1,23 @@
-// 챗봇 LLM 호출 (OpenAI API 직접 호출)
-// - VITE_OPENAI_API_KEY 가 있으면 LLM(RAG) 응답
-// - 없으면 호출부(ChatWidget)에서 로컬 검색 결과만 안내 (isLLMEnabled=false)
+// 챗봇 LLM 호출 (Netlify Function을 통한 OpenAI API 프록시)
+// - API 키는 서버(Netlify Function 환경변수)에만 존재, 브라우저 번들에는 노출되지 않음
+// - 프록시가 "키 미설정"을 응답하면 로컬 검색 결과만 안내 (usedLLM=false)
 import { searchLocal } from '@/services/dataLoader'
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY || ''
-const BASE_URL = (import.meta.env.VITE_OPENAI_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '')
-const MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-5-nano'
+const CHAT_ENDPOINT = '/.netlify/functions/chat'
 
-export const isLLMEnabled = () => Boolean(API_KEY)
+let enabledCache = null
+
+export async function isLLMEnabled() {
+  if (enabledCache !== null) return enabledCache
+  try {
+    const res = await fetch(CHAT_ENDPOINT)
+    const json = await res.json()
+    enabledCache = Boolean(json.enabled)
+  } catch {
+    enabledCache = false
+  }
+  return enabledCache
+}
 
 const SYSTEM_PROMPT = `당신은 'LocalHub'의 서울 지역 정보 안내 챗봇입니다.
 아래 [참고 데이터]는 한국관광공사 TourAPI(공공누리 제3유형)에서 제공된 실제 장소 목록입니다.
@@ -35,25 +45,22 @@ export async function askChatbot(query, history = []) {
   // 1) 로컬 RAG 검색 (항상 수행)
   const sources = await searchLocal(query, { limit: 8 })
 
-  // 2) 키가 없으면 로컬 검색 결과만 반환
-  if (!isLLMEnabled()) {
+  // 2) 프록시에 키가 없으면 로컬 검색 결과만 반환
+  if (!(await isLLMEnabled())) {
     return { text: localAnswer(query, sources), sources, usedLLM: false }
   }
 
-  // 3) 키가 있으면 LLM 에 검색결과를 컨텍스트로 전달
+  // 3) 키가 있으면 Netlify Function을 통해 LLM에 검색결과를 컨텍스트로 전달
   const messages = [
     { role: 'system', content: SYSTEM_PROMPT },
     ...history.slice(-6).map((m) => ({ role: m.role, content: m.text })),
     { role: 'user', content: `질문: ${query}\n\n[참고 데이터]\n${buildContext(sources)}` }
   ]
 
-  const res = await fetch(`${BASE_URL}/chat/completions`, {
+  const res = await fetch(CHAT_ENDPOINT, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({ model: MODEL, messages, temperature: 0.3, max_tokens: 700 })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages })
   })
 
   if (!res.ok) {
@@ -61,8 +68,7 @@ export async function askChatbot(query, history = []) {
     throw new Error(`LLM 응답 오류 (${res.status}) ${detail.slice(0, 200)}`)
   }
   const json = await res.json()
-  const text = json.choices?.[0]?.message?.content?.trim() || '(빈 응답)'
-  return { text, sources, usedLLM: true }
+  return { text: json.text || '(빈 응답)', sources, usedLLM: true }
 }
 
 // 로컬 전용 응답 문안 생성

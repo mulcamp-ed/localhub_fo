@@ -1,21 +1,26 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { askChatbot, isLLMEnabled } from '@/services/openai'
 
 const open = ref(false)
 const input = ref('')
 const loading = ref(false)
-const llm = isLLMEnabled()
+const llm = ref(false)
 const bodyEl = ref(null)
 
 const messages = ref([
   {
     role: 'assistant',
-    text: llm
-      ? '안녕하세요! 서울 지역 정보를 도와드리는 LocalHub 챗봇이에요. 맛집·관광지·축제 등 무엇이든 물어보세요. 🤖'
-      : '안녕하세요! (로컬 검색 모드) 맛집·관광지·축제 키워드로 물어보면 제공 데이터에서 찾아드려요. 🔍'
+    text: '안녕하세요! 서울 지역 정보를 도와드리는 LocalHub 챗봇이에요. 맛집·관광지·축제 등 무엇이든 물어보세요.'
   }
 ])
+
+onMounted(async () => {
+  llm.value = await isLLMEnabled()
+  messages.value[0].text = llm.value
+    ? '안녕하세요! 서울 지역 정보를 도와드리는 LocalHub 챗봇이에요. 맛집·관광지·축제 등 무엇이든 물어보세요. 🤖'
+    : '안녕하세요! (로컬 검색 모드) 맛집·관광지·축제 키워드로 물어보면 제공 데이터에서 찾아드려요. 🔍'
+})
 
 const examples = ['한강 근처 관광지 알려줘', '서울 맛집 추천', '요즘 축제 뭐 있어?']
 

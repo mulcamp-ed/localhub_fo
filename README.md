@@ -12,7 +12,7 @@
 ### 필수 기능
 - **익명 커뮤니티 CRUD** — 서울 게시판(목록·상세·작성·수정·삭제), `localStorage` 저장
 - **지역정보 챗봇** — 제공 JSON 기반 자연어 Q&A, 플로팅 위젯, 대화 히스토리, 모바일 대응
-  - `VITE_OPENAI_API_KEY`가 있으면 **AI(LLM) 모드**, 없으면 **로컬 검색 모드**로 폴백
+  - Netlify Function(`OPENAI_API_KEY`)이 설정되어 있으면 **AI(LLM) 모드**, 없으면 **로컬 검색 모드**로 폴백
 - **공공데이터 연동** — 서울 TourAPI 8종(8,150건)을 프론트에서 직접 로드
 
 ### 선택 기능 (요구 최소 1개 → **5종 모두 구현**)
@@ -32,7 +32,7 @@
 | 라우팅/상태 | Vue Router 4, Pinia |
 | 저장소 | 브라우저 localStorage (백엔드 없음) |
 | 시각화 | Leaflet, Chart.js |
-| AI | OpenAI API 직접 호출 |
+| AI | Netlify Functions 프록시를 통한 OpenAI API 호출 |
 
 ---
 
@@ -44,17 +44,21 @@ npm install
 
 # (선택) 챗봇 AI 모드를 쓰려면 환경변수 설정
 cp .env.example .env
-#  .env 에 VITE_OPENAI_API_KEY / VITE_OPENAI_BASE_URL / VITE_OPENAI_MODEL 입력
+#  .env 에 OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL 입력
 #  키를 비워두면 챗봇은 '로컬 검색 전용'으로 동작합니다.
 
-npm run dev       # 개발 서버 http://localhost:5173
+npm run dev       # 개발 서버 http://localhost:5173 (Function 없이 Vite만 실행 → 로컬 검색 모드)
 npm run build     # 프로덕션 빌드 → dist/
 npm run preview   # 빌드 결과 미리보기
+
+# 챗봇 AI 모드까지 로컬에서 테스트하려면 Netlify CLI 사용
+npx netlify dev   # Vite + Netlify Functions(netlify/functions/chat.js) 동시 실행
 ```
 
-### ⚠️ API 키 주의
-`VITE_` 접두사 환경변수는 **빌드 결과물(브라우저)에 그대로 포함**되어 노출될 수 있습니다.
-반드시 **사용량 제한 / 결제 한도가 낮게 설정된 키만** 사용하고, `.env`는 저장소에 커밋하지 마세요(`.gitignore` 포함).
+### 🛡️ API 키 보호 (Netlify Functions)
+OpenAI API 키는 `OPENAI_API_KEY`(VITE_ 접두사 없음)로 관리되며, 브라우저가 아닌 **Netlify Function**(`netlify/functions/chat.js`)에서만 사용됩니다.
+프론트엔드는 `/.netlify/functions/chat`을 호출할 뿐 키를 알지 못하므로 빌드 결과물에도 키가 포함되지 않습니다.
+배포 시 Netlify 대시보드 → Site configuration → Environment variables에 `OPENAI_API_KEY`(및 선택적으로 `OPENAI_BASE_URL`, `OPENAI_MODEL`)를 등록하세요.
 
 ---
 
@@ -62,15 +66,16 @@ npm run preview   # 빌드 결과 미리보기
 
 ```
 ├─ localhub-frontend/            # Vue3 + Vite SPA
+│  ├─ netlify/functions/chat.js  # OpenAI API 프록시 (키는 서버에만 존재)
 │  ├─ public/data/seoul/         # 서울 관광 데이터 8종 + manifest.json
 │  ├─ src/
 │  │  ├─ constants/              # 지역·카테고리 정의
-│  │  ├─ services/               # dataLoader / storage / openai(챗봇)
+│  │  ├─ services/               # dataLoader / storage / openai(챗봇, Function 호출)
 │  │  ├─ stores/                 # posts (Pinia)
 │  │  ├─ components/             # 헤더, 챗봇, 모달, 페이지네이션, 알림 …
 │  │  ├─ views/                  # 홈/게시판/상세/작성/지도/대시보드/캘린더/북마크
 │  │  └─ router/
-│  ├─ .env.example  vite.config.js
+│  ├─ .env.example  netlify.toml  vite.config.js
 ├─ docs/
 │  ├─ MVP_TEMPLATE.md / MVP_TEMPLATE_간략.docx   # MVP 간략 빈 템플릿 (md/docx)
 │  ├─ MVP_LocalHub.md / MVP_LocalHub.docx        # 실제 채운 MVP 정의서 (md/docx)
