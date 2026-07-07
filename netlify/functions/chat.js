@@ -40,7 +40,12 @@ export const handler = async (event) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${OPENAI_API_KEY}`
       },
-      body: JSON.stringify({ model: OPENAI_MODEL, messages, max_completion_tokens: 1500 })
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages,
+        max_completion_tokens: 1500,
+        reasoning_effort: 'minimal'
+      })
     })
 
     const raw = await upstream.text()
@@ -49,7 +54,8 @@ export const handler = async (event) => {
     }
 
     const json = JSON.parse(raw)
-    const text = json.choices?.[0]?.message?.content?.trim() || '(빈 응답)'
+    // content가 비어 있으면 빈 문자열 그대로 반환 → 클라이언트가 로컬 검색으로 폴백
+    const text = json.choices?.[0]?.message?.content?.trim() || ''
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
