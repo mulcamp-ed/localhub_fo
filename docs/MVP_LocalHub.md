@@ -43,7 +43,7 @@
 | 항목 | 내용 |
 |------|------|
 | Frontend | Vue.js 3 (Vite) + Vue Router + Pinia |
-| 저장/AI/시각화 | localStorage · OpenAI 호환(GMS) · Leaflet, Chart.js |
+| 저장/AI/시각화 | localStorage · OpenAI API · Leaflet, Chart.js |
 | 배포 | Netlify (repo 연동) |
 | 데이터 | 한국관광공사 TourAPI 4.0 — 서울 8종 8,150건 / 공공누리 제3유형(출처표시·변경금지) / 2026-06 수집 |
 

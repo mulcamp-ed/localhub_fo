@@ -1,6 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue'
-import { askChatbot, isLLMEnabled } from '@/services/gms'
+import { askChatbot, isLLMEnabled } from '@/services/openai'
 
 const open = ref(false)
 const input = ref('')

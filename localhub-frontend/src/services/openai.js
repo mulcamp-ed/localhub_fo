@@ -1,11 +1,11 @@
-// 챗봇 LLM 호출 (GMS = OpenAI 호환 게이트웨이)
-// - VITE_GMS_API_KEY 가 있으면 LLM(RAG) 응답
+// 챗봇 LLM 호출 (OpenAI API 직접 호출)
+// - VITE_OPENAI_API_KEY 가 있으면 LLM(RAG) 응답
 // - 없으면 호출부(ChatWidget)에서 로컬 검색 결과만 안내 (isLLMEnabled=false)
 import { searchLocal } from '@/services/dataLoader'
 
-const API_KEY = import.meta.env.VITE_GMS_API_KEY || ''
-const BASE_URL = (import.meta.env.VITE_GMS_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '')
-const MODEL = import.meta.env.VITE_GMS_MODEL || 'gpt-4o-mini'
+const API_KEY = import.meta.env.VITE_OPENAI_API_KEY || ''
+const BASE_URL = (import.meta.env.VITE_OPENAI_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '')
+const MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-5-nano'
 
 export const isLLMEnabled = () => Boolean(API_KEY)
 

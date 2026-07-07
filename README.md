@@ -12,7 +12,7 @@
 ### 필수 기능
 - **익명 커뮤니티 CRUD** — 서울 게시판(목록·상세·작성·수정·삭제), `localStorage` 저장
 - **지역정보 챗봇** — 제공 JSON 기반 자연어 Q&A, 플로팅 위젯, 대화 히스토리, 모바일 대응
-  - `VITE_GMS_API_KEY`가 있으면 **AI(LLM) 모드**, 없으면 **로컬 검색 모드**로 폴백
+  - `VITE_OPENAI_API_KEY`가 있으면 **AI(LLM) 모드**, 없으면 **로컬 검색 모드**로 폴백
 - **공공데이터 연동** — 서울 TourAPI 8종(8,150건)을 프론트에서 직접 로드
 
 ### 선택 기능 (요구 최소 1개 → **5종 모두 구현**)
@@ -32,7 +32,7 @@
 | 라우팅/상태 | Vue Router 4, Pinia |
 | 저장소 | 브라우저 localStorage (백엔드 없음) |
 | 시각화 | Leaflet, Chart.js |
-| AI | OpenAI 호환 게이트웨이(GMS) 직접 호출 |
+| AI | OpenAI API 직접 호출 |
 
 ---
 
@@ -44,7 +44,7 @@ npm install
 
 # (선택) 챗봇 AI 모드를 쓰려면 환경변수 설정
 cp .env.example .env
-#  .env 에 VITE_GMS_API_KEY / VITE_GMS_BASE_URL / VITE_GMS_MODEL 입력
+#  .env 에 VITE_OPENAI_API_KEY / VITE_OPENAI_BASE_URL / VITE_OPENAI_MODEL 입력
 #  키를 비워두면 챗봇은 '로컬 검색 전용'으로 동작합니다.
 
 npm run dev       # 개발 서버 http://localhost:5173
@@ -65,7 +65,7 @@ npm run preview   # 빌드 결과 미리보기
 │  ├─ public/data/seoul/         # 서울 관광 데이터 8종 + manifest.json
 │  ├─ src/
 │  │  ├─ constants/              # 지역·카테고리 정의
-│  │  ├─ services/               # dataLoader / storage / gms(챗봇)
+│  │  ├─ services/               # dataLoader / storage / openai(챗봇)
 │  │  ├─ stores/                 # posts (Pinia)
 │  │  ├─ components/             # 헤더, 챗봇, 모달, 페이지네이션, 알림 …
 │  │  ├─ views/                  # 홈/게시판/상세/작성/지도/대시보드/캘린더/북마크
