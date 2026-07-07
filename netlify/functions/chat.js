@@ -40,7 +40,7 @@ export const handler = async (event) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${OPENAI_API_KEY}`
       },
-      body: JSON.stringify({ model: OPENAI_MODEL, messages, max_completion_tokens: 700 })
+      body: JSON.stringify({ model: OPENAI_MODEL, messages, max_completion_tokens: 1500 })
     })
 
     const raw = await upstream.text()

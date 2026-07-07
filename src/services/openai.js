@@ -7,6 +7,17 @@ const CHAT_ENDPOINT = '/.netlify/functions/chat'
 
 let enabledCache = null
 
+// 인사/잡담만 있는 질의는 장소 검색을 건너뛰고 안내 문구로 응답
+const GREETING_RE = /^(하이|안녕|hi|hello|헬로|반가워|ㅎㅇ)[!?.~\s]*$/i
+
+function greetingReply() {
+  return {
+    text: '안녕하세요! 서울 맛집·관광지·축제 등 궁금한 걸 물어봐 주세요. 예) "한강 근처 관광지 알려줘"',
+    sources: [],
+    usedLLM: false
+  }
+}
+
 export async function isLLMEnabled() {
   if (enabledCache !== null) return enabledCache
   try {
@@ -42,6 +53,8 @@ function buildContext(items) {
  * @returns {{ text:string, sources:object[], usedLLM:boolean }}
  */
 export async function askChatbot(query, history = []) {
+  if (GREETING_RE.test((query || '').trim())) return greetingReply()
+
   // 1) 로컬 RAG 검색 (항상 수행)
   const sources = await searchLocal(query, { limit: 8 })
 
@@ -68,7 +81,8 @@ export async function askChatbot(query, history = []) {
     throw new Error(`LLM 응답 오류 (${res.status}) ${detail.slice(0, 200)}`)
   }
   const json = await res.json()
-  return { text: json.text || '(빈 응답)', sources, usedLLM: true }
+  if (!json.text) return { text: localAnswer(query, sources), sources, usedLLM: false }
+  return { text: json.text, sources, usedLLM: true }
 }
 
 // 로컬 전용 응답 문안 생성

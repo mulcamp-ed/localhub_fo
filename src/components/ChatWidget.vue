@@ -77,6 +77,7 @@ async function scrollDown() {
     <div ref="bodyEl" class="chat-body">
       <div v-for="(m, i) in messages" :key="i" class="msg" :class="m.role">
         <div class="bubble" :class="{ err: m.error }">
+          <span v-if="m.role === 'assistant'" class="mode-icon">{{ m.usedLLM ? '🤖' : '💬' }}</span>
           <span class="text">{{ m.text }}</span>
           <!-- 근거 데이터 출처 -->
           <div v-if="m.sources?.length && m.usedLLM" class="sources">
@@ -141,6 +142,7 @@ async function scrollDown() {
   white-space: pre-wrap; line-height: 1.55; box-shadow: var(--shadow-sm);
 }
 .msg.assistant .bubble { background: #fff; border-bottom-left-radius: 4px; }
+.mode-icon { margin-right: 4px; }
 .msg.user .bubble { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
 .bubble.err { background: #fef2f2; color: var(--danger); }
 
